@@ -36,28 +36,42 @@ public class ChoHan {
         }
     }
 
+    /*
+    ORDER OF THE GAME:
+    1. THE DICE ROLLED. ODD OR EVEN IS DETERMINED.
+    2. YOU ARE ASKED ON WHAT TO DO (ODD, EVEN, GUESS A NUMBER, ETC.). YOU CAN INPUT CHEAT CODE
+    3. YOU PLACE YOUR BET
+    4. RESULT
+    5. PLAY AGAIN?
+     */
+
     public static void startGame() {
+        Integer ante = 0;
+        String answers;
+
         round += 1;
         System.out.println("Round " + round);
         System.out.println("Current points: " + point);
 
+        // 1. THE DICE ROLLED
         int die1 = rollDice();
         int die2 = rollDice();
         String evenOrOdd = EvenOrOdd(die1, die2);
 
-        System.out.println(createGameChoices());
-
+        // 2. MAKE CHOICE
         while (true) {
-            String answers = choicePicked.nextLine().toLowerCase();
-            Integer ante;
+            System.out.println(createGameChoices());
+            answers = choicePicked.nextLine().toLowerCase();
 
-            // 1. BASIC LEVEL: ODD OR EVEN
+            // BASIC LEVEL: ODD OR EVEN
             if (answers.equals("1")) {
                 answers = "odd";
+                break;
             }
 
             if (answers.equals("2")) {
                 answers = "even";
+                break;
             }
 
             /*
@@ -96,34 +110,57 @@ public class ChoHan {
              */
 
 
-            // Cheat Code here:
+            // Cheat Code here (mainly uses for testing):
             if (answers.equals("123231")) {
                 System.out.println("Cheat code activated: +1000 points");
+                System.out.println("F I L T H Y");
                 point += 1000;
+            }
+
+            if (answers.equals("i want to win")) {
+                answers = null;
+                System.out.println("Cheat code activated: You win!");
+                System.out.println("I'm not giving you anything though.");
+                youWon(0, 0);
                 break;
             }
 
-            // Set betting amount AFTER making your choices
-            while (true) {
-                System.out.println("Current points: " + point);
-                System.out.println("Set bet amount (amount cannot be more than " + betMax + "):");
-                ante = choicePicked.nextInt();
-                choicePicked.nextLine(); // This will consume the leftover newline "\n"
+            if (answers.equals("i want to lose")) {
+                answers = null;
+                System.out.println("Cheat code activated: You lose?");
+                System.out.println("Unorthodox display of hubris but very well.");
+                youLose();
+                break;
+            } else System.out.println("Invalid answer. Try again.");
+        }
 
-                if (ante <= betMax && ante <= point) {
-                    point -= ante;
-                    break;
-                }
-                if (ante > betMax)
-                    // Put down more than betting maximum(betMax) allowed
-                    System.out.println("Amount cannot be more than " + betMax + " Try again.\n");
+        // 3. BET
+        // Set betting amount AFTER making your choices
+        while (true) {
+            if (answers == null) break;
+            System.out.println("Current points: " + point);
+            System.out.println("Set bet amount (amount cannot be more than " + betMax + "):");
+            ante = choicePicked.nextInt();
+            choicePicked.nextLine(); // This will consume the leftover newline "\n"
 
-                if (ante > point)
-                    // Betting more points than you have
-                    System.out.println("Cannot ante more points than you have. Try again.\n");
+            if (ante <= betMax && ante <= point) {
+                point -= ante;
+                break;
             }
+            if (ante > betMax)
+                // Put down more than betting maximum(betMax) allowed
+                System.out.println("Amount cannot be more than " + betMax + " Try again.\n");
 
-            // 1. BASIC LEVEL: ODD OR EVEN
+            if (ante > point)
+                // Betting more points than you have
+                System.out.println("Cannot ante more points than you have. Try again.\n");
+
+            else System.out.println("Invalid answer. Try again.");
+        }
+
+        // 4. RESULT
+        // ODD OR EVEN RESULT
+        if (answers != null) {
             if (answers.equals("odd") || answers.equals("even")) {
                 System.out.println(die1 + " " + die2);
 
@@ -140,30 +177,33 @@ public class ChoHan {
                 } else {
                     youLose();
                 }
-
-                break;
-            } else System.out.println("Invalid answer. Try again.");
+            }
         }
 
+        // IF YOU ARE OUT OF POINTS, THE GAME KICK YOU OUT
         if (point == 0) {
             System.out.print("Uh oh! You ran out of points");
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
                 System.out.print(".");
-                Thread.sleep(100);
+                Thread.sleep(200);
                 System.out.print(".");
-                Thread.sleep(100);
+                Thread.sleep(200);
                 System.out.println(".");
-                Thread.sleep(100);
+                Thread.sleep(200);
                 System.out.print("Avoid dark alleys.");
-                Thread.sleep(100);
+                Thread.sleep(200);
                 System.exit(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if (winStreak % 5 == 0) System.out.println("Nice going! Your win streak is currently at " + winStreak);
+        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
+        if (winStreak % 5 == 0 && winStreak != 0)
+            System.out.println("Nice going! Your win streak is currently at " + winStreak);
+
+        // PLAY AGAIN?
         while (true) {
             System.out.println("Again? [Y/N]");
             String again = choicePicked.nextLine().toLowerCase();
