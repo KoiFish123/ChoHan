@@ -25,7 +25,6 @@ public class ChoHan {
                 System.out.println();
                 System.out.println("Game Started\n");
                 startGame();
-                break;
             }
             if (start.equals("quit") || start.equals("2")) {
                 System.out.println("Ending the game");
@@ -48,30 +47,36 @@ public class ChoHan {
     public static void startGame() {
         Integer ante = 0;
         String answers;
+        boolean continuePlaying = true;
 
-        player.incrementRound();
-        System.out.println("Round " + player.getRounds());
-        System.out.println("Current points: " + player.getPoints());
+        while (continuePlaying) {
+            player.incrementRound();
+            System.out.println("Round " + player.getRounds());
+            System.out.println("Current points: " + player.getPoints());
 
-        // 1. THE DICE ROLLED
-        int die1 = gameUtils.rollDice();
-        int die2 = gameUtils.rollDice();
-        String evenOrOdd = gameUtils.EvenOrOdd(die1, die2);
+            // 1. THE DICE ROLLED
+            int die1 = gameUtils.rollDice();
+            int die2 = gameUtils.rollDice();
+            String evenOrOdd = gameUtils.EvenOrOdd(die1, die2);
 
-        // 2. MAKE CHOICE
-        while (true) {
-            System.out.println(createGameChoices());
+            // 2. MAKE CHOICE
+            String userInput;
 
-            // BASIC LEVEL: ODD OR EVEN
-            if (getUserInput().equals("1")) {
-                answers = "odd";
-                break;
-            }
+            while (true) {
+                System.out.println(createGameChoices());
 
-            if (getUserInput().equals("2")) {
-                answers = "even";
-                break;
-            }
+                userInput = getUserInput();
+
+                // BASIC LEVEL: ODD OR EVEN
+                if (userInput.equals("1")) {
+                    answers = "odd";
+                    break;
+                }
+
+                if (userInput.equals("2")) {
+                    answers = "even";
+                    break;
+                }
 
             /*
             TODO:
@@ -109,129 +114,160 @@ public class ChoHan {
              */
 
 
-            // Cheat Code here (mainly uses for testing):
-            if (getUserInput().equals("123231")) {
-                System.out.println("Cheat code activated: +1000 points");
-                System.out.println("F I L T H Y");
-                player.addPoints(1000);
+                // Cheat Code here (mainly uses for testing):
+                if (userInput.equals("123231")) {
+                    System.out.println("Cheat code activated: +1000 points");
+                    System.out.println("F I L T H Y");
+                    player.addPoints(1000);
+                }
+
+                if (userInput.equals("i want to win")) {
+                    answers = null;
+                    System.out.println("Cheat code activated: You win!");
+                    System.out.println("I'm not giving you anything though.");
+                    youWon(0, 0);
+                    break;
+                }
+
+                if (userInput.equals("i want to lose")) {
+                    answers = null;
+                    System.out.println("Cheat code activated: You lose?");
+                    System.out.println("Unorthodox display of hubris but very well.");
+                    youLose();
+                    break;
+                }
+
+                if (userInput.equals("donate to charity")) {
+                    answers = null;
+                    System.out.println("Cheat code activated: remove all points");
+                    System.out.println("The orphanage thank you for the " + player.getPoints() + " points... \nWhat ARE they going to do with it?\n");
+                    player.setPoints(0);
+                    break;
+                }
+                else System.out.println("Invalid answer. Try again.");
             }
 
-            if (getUserInput().equals("i want to win")) {
-                answers = null;
-                System.out.println("Cheat code activated: You win!");
-                System.out.println("I'm not giving you anything though.");
-                youWon(0, 0);
-                break;
+            // 3. BET
+            // Set betting amount AFTER making your choices
+            while (true) {
+                if (answers == null) break;
+                System.out.println("\nCurrent points: " + player.getPoints());
+                System.out.println("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
+                try {
+                    ante = choicePicked.nextInt();
+                    choicePicked.nextLine(); // This will consume the leftover newline "\n"
+
+                    // After certain amount of rounds, your betMax will increase
+                    // For every 10 rounds, increase betMax by 100, to max of 500
+                    if (player.getBetMax() < 500) {
+                        int increaseAmount = (player.getRounds() / 10) * 100;
+                        player.setBetMax(Math.min(player.getBetMax() + increaseAmount, 500));
+                    }
+
+                    if (ante <= player.getBetMax() && ante <= player.getPoints() && ante > 0) {
+                        player.subtractPoints(ante);
+                        break;
+                    }
+                    if (ante > player.getBetMax())
+                        // Put down more than betting maximum(betMax) allowed
+                        System.out.print("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
+
+                    if (ante <= 0)
+                        // less than or equal to 0 bet
+                        System.out.print("Amount cannot be less than or equal to 0. Try again.\n");
+
+                    if (ante > player.getPoints())
+                        // Betting more points than you have
+                        System.out.println("Cannot ante more points than you have. Try again.\n");
+
+                } catch (java.util.InputMismatchException e) {
+                    System.out.print("Please enter a valid integer for your bet.");
+                    choicePicked.nextLine(); // Clear the invalid input
+                }
             }
 
-            if (getUserInput().equals("i want to lose")) {
-                answers = null;
-                System.out.println("Cheat code activated: You lose?");
-                System.out.println("Unorthodox display of hubris but very well.");
-                youLose();
-                break;
-            } else System.out.println("Invalid answer. Try again.");
-        }
+            // 4. RESULT
+            // ODD OR EVEN RESULT
+            if (answers != null) {
+                if (answers.equals("odd") || answers.equals("even")) {
+                    try {
+                        System.out.print("The result is");
+                        Thread.sleep(500);
+                        System.out.print(".");
+                        Thread.sleep(600);
+                        System.out.print(".");
+                        Thread.sleep(700);
+                        System.out.print(".");
+                        Thread.sleep(800);
+                        System.out.println("\n" + die1 + " " + die2);
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-        // 3. BET
-        // Set betting amount AFTER making your choices
-        while (true) {
-            if (answers == null) break;
-            System.out.println("Current points: " + player.getPoints());
-            System.out.println("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
-            ante = choicePicked.nextInt();
-            choicePicked.nextLine(); // This will consume the leftover newline "\n"
-
-            // After certain amount of rounds, your betMax will increase
-            // For every 10 rounds, increase betMax by 100, to max of 500
-            if (player.getBetMax() < 500) {
-                int increaseAmount = (player.getRounds() / 10) * 100;
-                player.setBetMax(Math.min(player.getBetMax() + increaseAmount, 500));
-            }
-
-            if (ante <= player.getBetMax() && ante <= player.getPoints()) {
-                player.subtractPoints(ante);
-                break;
-            }
-            if (ante > player.getBetMax())
-                // Put down more than betting maximum(betMax) allowed
-                System.out.println("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
-
-            if (ante > player.getPoints())
-                // Betting more points than you have
-                System.out.println("Cannot ante more points than you have. Try again.\n");
-
-            else System.out.println("Invalid answer. Try again.");
-        }
-
-        // 4. RESULT
-        // ODD OR EVEN RESULT
-        if (answers != null) {
-            if (answers.equals("odd") || answers.equals("even")) {
-                System.out.println(die1 + " " + die2);
-
-                if (answers.equals(evenOrOdd.toLowerCase())) {
-                    System.out.println("Correct! Not bad.");
+                    if (answers.equals(evenOrOdd.toLowerCase())) {
                     /*
                     TODO: Find alternative for way to gain point
                         - In the future, there will be NPC that contribute to the betting pool
                           which will affect the points the player get back.
                         - But for now, tripling the ante will suffice.
                      */
-                    youWon(ante, 3);
+                        youWon(ante, 3);
 
-                } else {
-                    youLose();
+                    } else {
+                        youLose();
+                    }
                 }
             }
-        }
 
-        // IF YOU ARE OUT OF POINTS, THE GAME KICK YOU OUT
-        if (player.getPoints() == 0) {
-            System.out.print("Uh oh! You ran out of points");
-            try {
-                Thread.sleep(200);
-                System.out.print(".");
-                Thread.sleep(200);
-                System.out.print(".");
-                Thread.sleep(200);
-                System.out.println(".");
-                Thread.sleep(200);
-                System.out.print("Avoid dark alleys.");
-                Thread.sleep(200);
-                System.exit(0);
-            } catch (Exception e) {
-                e.printStackTrace();
+            // IF YOU ARE OUT OF POINTS, THE GAME KICK YOU OUT
+            if (player.getPoints() == 0) {
+                System.out.print("Uh oh! You ran out of points");
+                try {
+                    Thread.sleep(500);
+                    System.out.print(".");
+                    Thread.sleep(600);
+                    System.out.print(".");
+                    Thread.sleep(700);
+                    System.out.println(".");
+                    Thread.sleep(800);
+                    System.out.print("Avoid dark alleys.");
+                    System.exit(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
+            // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
+            if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
+                System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
 
-        // PLAY AGAIN?
-        while (true) {
-            System.out.println("Again? [Y/N]");
-            String again = choicePicked.nextLine().toLowerCase();
-            if (again.equals("y") || again.equals("yes")) {
-                System.out.println();
-                System.out.println("Game Started\n");
-                startGame();
-                break;
+            // PLAY AGAIN?
+            while (true) {
+                System.out.println("Again? [Y/N]");
+                String again = choicePicked.nextLine().toLowerCase();
+                if (again.equals("y") || again.equals("yes")) {
+                    System.out.println();
+                    System.out.println("Game Started\n");
+                    break;  // Breaks out of the "Again? [Y/N]" loop and continues with the main game loop
+                }
+                if (again.equals("n") || again.equals("no")) {
+                    System.out.println("Too bad. Come again.");
+                    System.out.println("Final points: " + player.getPoints());
+                    System.out.println("Highest Win Streak: " + player.getHighestWinStreak());
+                    System.out.println("Title: " + gameUtils.getRanking(player.getPoints()));
+                    continuePlaying = false;  // Ends the main game loop
+                    break;  // Breaks out of the "Again? [Y/N]" loop
+                } else System.out.println("Invalid answer. Try again.");
             }
-            if (again.equals("n") || again.equals("no")) {
-                System.out.println("Too bad. Come again.");
-                System.out.println("Final points: " + player.getPoints());
-                System.out.println("Highest Win Streak: " + player.getHighestWinStreak());
-                System.out.println("Title: " + gameUtils.getRanking(player.getPoints()));
-                System.exit(0);
-            } else System.out.println("Invalid answer. Try again.");
         }
     }
 
     // Handle point after you won
     public static void youWon(int ante, int multiplier) {
         // DON'T TOUCH. IT IS FINE AS IS.
+        System.out.println("Correct! Not bad.");
+
         System.out.println("You gain " + (ante * multiplier) + " points.");
 
         player.addPoints(ante * multiplier);
@@ -261,9 +297,9 @@ public class ChoHan {
 
     public static String createGameChoices() {
         String gameChoices;
-        gameChoices = "What will it be?\n";
-        gameChoices += "1. Odd\n";
-        gameChoices += "2. Even";
+        gameChoices = "What will it be?";
+        gameChoices += "\n1. Odd";
+        gameChoices += "\n2. Even";
         /*
         if (win >= 5) {
             gameChoices += "3. Guess a number on one of the dice\n";

@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="update order of game">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="add utils and player class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ChoHan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ChoHan.java" afterDir="false" />
     </list>
@@ -25,6 +24,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -72,12 +72,20 @@
       <option name="project" value="LOCAL" />
       <updated>1696630329209</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="add utils and player class">
+      <created>1696634038086</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1696634038086</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add description to ChoHan" />
     <MESSAGE value="update order of game" />
-    <option name="LAST_COMMIT_MESSAGE" value="update order of game" />
+    <MESSAGE value="add utils and player class" />
+    <option name="LAST_COMMIT_MESSAGE" value="add utils and player class" />
   </component>
 </project>
