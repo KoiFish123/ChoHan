@@ -1,20 +1,20 @@
-import java.lang.Math;
 import java.util.Scanner;
 
+
 public class ChoHan {
-    static int point = 100;
-    static int betMax = 200;
-    static int round = 0;
-    static int win = 0;
-    static int winStreak = 0;
-    static int highestWinstreak = 0;
-    static int loses = 0;               // I haven't decided what to do with this yet. Maybe for the achievements?
-    static int even = 0;
-    static int odd = 0;
+    static final int INITIAL_POINTS = 100;
+    static final int MAX_BET = 200;
+    static int even = 0;        // For later
+    static int odd = 0;         // For later
 
     static Scanner choicePicked = new Scanner(System.in);
+    private static GameUtils gameUtils = new GameUtilsImpl();
+
+    static Player player = new Player();
+
 
     public static void main(String[] args) {
+
 
         System.out.println("Type 1 or Start to start the game, or 2 or Quit to quit");
 
@@ -49,27 +49,26 @@ public class ChoHan {
         Integer ante = 0;
         String answers;
 
-        round += 1;
-        System.out.println("Round " + round);
-        System.out.println("Current points: " + point);
+        player.incrementRound();
+        System.out.println("Round " + player.getRounds());
+        System.out.println("Current points: " + player.getPoints());
 
         // 1. THE DICE ROLLED
-        int die1 = rollDice();
-        int die2 = rollDice();
-        String evenOrOdd = EvenOrOdd(die1, die2);
+        int die1 = gameUtils.rollDice();
+        int die2 = gameUtils.rollDice();
+        String evenOrOdd = gameUtils.EvenOrOdd(die1, die2);
 
         // 2. MAKE CHOICE
         while (true) {
             System.out.println(createGameChoices());
-            answers = choicePicked.nextLine().toLowerCase();
 
             // BASIC LEVEL: ODD OR EVEN
-            if (answers.equals("1")) {
+            if (getUserInput().equals("1")) {
                 answers = "odd";
                 break;
             }
 
-            if (answers.equals("2")) {
+            if (getUserInput().equals("2")) {
                 answers = "even";
                 break;
             }
@@ -111,13 +110,13 @@ public class ChoHan {
 
 
             // Cheat Code here (mainly uses for testing):
-            if (answers.equals("123231")) {
+            if (getUserInput().equals("123231")) {
                 System.out.println("Cheat code activated: +1000 points");
                 System.out.println("F I L T H Y");
-                point += 1000;
+                player.addPoints(1000);
             }
 
-            if (answers.equals("i want to win")) {
+            if (getUserInput().equals("i want to win")) {
                 answers = null;
                 System.out.println("Cheat code activated: You win!");
                 System.out.println("I'm not giving you anything though.");
@@ -125,7 +124,7 @@ public class ChoHan {
                 break;
             }
 
-            if (answers.equals("i want to lose")) {
+            if (getUserInput().equals("i want to lose")) {
                 answers = null;
                 System.out.println("Cheat code activated: You lose?");
                 System.out.println("Unorthodox display of hubris but very well.");
@@ -138,20 +137,27 @@ public class ChoHan {
         // Set betting amount AFTER making your choices
         while (true) {
             if (answers == null) break;
-            System.out.println("Current points: " + point);
-            System.out.println("Set bet amount (amount cannot be more than " + betMax + "):");
+            System.out.println("Current points: " + player.getPoints());
+            System.out.println("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
             ante = choicePicked.nextInt();
             choicePicked.nextLine(); // This will consume the leftover newline "\n"
 
-            if (ante <= betMax && ante <= point) {
-                point -= ante;
+            // After certain amount of rounds, your betMax will increase
+            // For every 10 rounds, increase betMax by 100, to max of 500
+            if (player.getBetMax() < 500) {
+                int increaseAmount = (player.getRounds() / 10) * 100;
+                player.setBetMax(Math.min(player.getBetMax() + increaseAmount, 500));
+            }
+
+            if (ante <= player.getBetMax() && ante <= player.getPoints()) {
+                player.subtractPoints(ante);
                 break;
             }
-            if (ante > betMax)
+            if (ante > player.getBetMax())
                 // Put down more than betting maximum(betMax) allowed
-                System.out.println("Amount cannot be more than " + betMax + " Try again.\n");
+                System.out.println("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
 
-            if (ante > point)
+            if (ante > player.getPoints())
                 // Betting more points than you have
                 System.out.println("Cannot ante more points than you have. Try again.\n");
 
@@ -181,7 +187,7 @@ public class ChoHan {
         }
 
         // IF YOU ARE OUT OF POINTS, THE GAME KICK YOU OUT
-        if (point == 0) {
+        if (player.getPoints() == 0) {
             System.out.print("Uh oh! You ran out of points");
             try {
                 Thread.sleep(200);
@@ -200,8 +206,8 @@ public class ChoHan {
         }
 
         // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (winStreak % 5 == 0 && winStreak != 0)
-            System.out.println("Nice going! Your win streak is currently at " + winStreak);
+        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
+            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
 
         // PLAY AGAIN?
         while (true) {
@@ -215,9 +221,9 @@ public class ChoHan {
             }
             if (again.equals("n") || again.equals("no")) {
                 System.out.println("Too bad. Come again.");
-                System.out.println("Final points: " + point);
-                System.out.println("Highest Win Streak: " + highestWinstreak);
-                System.out.println("Title: " + getRanking(point));
+                System.out.println("Final points: " + player.getPoints());
+                System.out.println("Highest Win Streak: " + player.getHighestWinStreak());
+                System.out.println("Title: " + gameUtils.getRanking(player.getPoints()));
                 System.exit(0);
             } else System.out.println("Invalid answer. Try again.");
         }
@@ -225,52 +231,32 @@ public class ChoHan {
 
     // Handle point after you won
     public static void youWon(int ante, int multiplier) {
+        // DON'T TOUCH. IT IS FINE AS IS.
         System.out.println("You gain " + (ante * multiplier) + " points.");
 
-        point += (ante * multiplier);
+        player.addPoints(ante * multiplier);
 
-        win++;
-        winStreak++;
+        player.incrementWins();
 
-        if (winStreak > highestWinstreak) highestWinstreak = winStreak;
+        player.incrementWinStreak();
 
-        System.out.println("Current points: " + point);
+        if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
+
+        System.out.println("Current points: " + player.getPoints());
     }
 
     public static void youLose() {
+        // DON'T TOUCH. IT IS FINE AS IS.
         System.out.println("Incorrect. it is what it is.");
 
         // Gain nothing if you lose
 
         // Lose your Win Streak
-        winStreak = 0;
+        player.setWinStreak(0);
 
-        System.out.println("Current points: " + point);
-    }
+        player.incrementLoses();
 
-    public static int rollDice() {
-        // DON'T TOUCH
-        int die = (int) (Math.random() * 6) + 1;
-        return die;
-    }
-
-    public static String EvenOrOdd(int die1, int die2) {
-        // DON'T TOUCH
-        if ((die1 + die2) % 2 == 1) {
-            odd++;
-            return ("ODD");
-        }
-        even++;
-        return ("EVEN");
-    }
-
-    public static Ranking getRanking(int point) {
-        for (Ranking rank : Ranking.values()) {
-            if (point >= rank.lowerBound && point <= rank.upperBound) {
-                return rank;
-            }
-        }
-        throw new IllegalArgumentException("Invalid rank: " + point);
+        System.out.println("Current points: " + player.getPoints());
     }
 
     public static String createGameChoices() {
@@ -283,7 +269,10 @@ public class ChoHan {
             gameChoices += "3. Guess a number on one of the dice\n";
         }
          */
-
         return gameChoices;
+    }
+
+    public static String getUserInput() {
+        return choicePicked.nextLine().toLowerCase();
     }
 }
