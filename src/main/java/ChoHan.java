@@ -1,4 +1,8 @@
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 
 public class ChoHan {
@@ -9,12 +13,12 @@ public class ChoHan {
 
     static Scanner choicePicked = new Scanner(System.in);
     private static GameUtils gameUtils = new GameUtilsImpl();
-
     static Player player = new Player();
+
+    static Map<String, Consumer<Player>> cheatCodes = new HashMap<>();
 
 
     public static void main(String[] args) {
-
 
         System.out.println("Type 1 or Start to start the game, or 2 or Quit to quit");
 
@@ -26,11 +30,9 @@ public class ChoHan {
                 System.out.println("Game Started\n");
                 startGame();
             }
-            if (start.equals("quit") || start.equals("2")) {
+            else if (start.equals("quit") || start.equals("2")) {
                 System.out.println("Ending the game");
                 System.exit(0);
-            } else {
-                System.out.println("Failed to start. Try again.");
             }
         }
     }
@@ -46,10 +48,41 @@ public class ChoHan {
 
     public static void startGame() {
         Integer ante = 0;
-        String answers;
+        String answers = null;
         boolean continuePlaying = true;
+        AtomicBoolean cheatUsedToSkip = new AtomicBoolean(false);
+
+        // Cheat Code here (mainly uses for testing):
+
+        cheatCodes.put("123231", player -> {
+            System.out.println("Cheat code activated: +1000 points");
+            System.out.println("F I L T H Y");
+            player.addPoints(1000);
+        });
+
+        cheatCodes.put("i want to win", player -> {
+            System.out.println("Cheat code activated: You win!");
+            System.out.println("I'm not giving you anything though.");
+            youWon(0, 0);
+            cheatUsedToSkip.set(true);
+        });
+
+        cheatCodes.put("i want to lose", player -> {
+            System.out.println("Cheat code activated: You lose?");
+            System.out.println("Unorthodox display of hubris but very well.");
+            youLose();
+            cheatUsedToSkip.set(true);
+        });
+
+        cheatCodes.put("donate to charity", player -> {
+            System.out.println("Cheat code activated: remove all points");
+            System.out.println("The orphanage thank you for the " + player.getPoints() + " points... \nWhat ARE they going to do with it?\n");
+            player.setPoints(0);
+            cheatUsedToSkip.set(true);
+        });
 
         while (continuePlaying) {
+            cheatUsedToSkip.set(false);
             player.incrementRound();
             System.out.println("Round " + player.getRounds());
             System.out.println("Current points: " + player.getPoints());
@@ -66,6 +99,15 @@ public class ChoHan {
                 System.out.println(createGameChoices());
 
                 userInput = getUserInput();
+
+                if (cheatCodes.containsKey(userInput)) {
+                    cheatCodes.get(userInput).accept(player);
+                    if (cheatUsedToSkip.get()) {
+                        break; // Exit the current game round loop to proceed to "Again? [Y/N]"
+                    }
+                    userInput = null;
+                    continue; // If a cheat code was activated, move on to the next loop iteration.
+                }
 
                 // BASIC LEVEL: ODD OR EVEN
                 if (userInput.equals("1")) {
@@ -112,38 +154,6 @@ public class ChoHan {
              - Choice from 0 to 5.
              - The reward is difference depends on your choice.
              */
-
-
-                // Cheat Code here (mainly uses for testing):
-                if (userInput.equals("123231")) {
-                    System.out.println("Cheat code activated: +1000 points");
-                    System.out.println("F I L T H Y");
-                    player.addPoints(1000);
-                }
-
-                if (userInput.equals("i want to win")) {
-                    answers = null;
-                    System.out.println("Cheat code activated: You win!");
-                    System.out.println("I'm not giving you anything though.");
-                    youWon(0, 0);
-                    break;
-                }
-
-                if (userInput.equals("i want to lose")) {
-                    answers = null;
-                    System.out.println("Cheat code activated: You lose?");
-                    System.out.println("Unorthodox display of hubris but very well.");
-                    youLose();
-                    break;
-                }
-
-                if (userInput.equals("donate to charity")) {
-                    answers = null;
-                    System.out.println("Cheat code activated: remove all points");
-                    System.out.println("The orphanage thank you for the " + player.getPoints() + " points... \nWhat ARE they going to do with it?\n");
-                    player.setPoints(0);
-                    break;
-                }
                 else System.out.println("Invalid answer. Try again.");
             }
 
@@ -200,6 +210,12 @@ public class ChoHan {
                         System.out.print(".");
                         Thread.sleep(800);
                         System.out.println("\n" + die1 + " " + die2);
+                        Thread.sleep(1000);
+
+                        if (die1 == 1 && die2 == 1)
+                        System.out.print("SNAKE EYES! ");
+
+                        System.out.println(evenOrOdd);
                         Thread.sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -261,6 +277,7 @@ public class ChoHan {
                 } else System.out.println("Invalid answer. Try again.");
             }
         }
+        System.exit(0);
     }
 
     // Handle point after you won
@@ -278,7 +295,7 @@ public class ChoHan {
 
         if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
 
-        System.out.println("Current points: " + player.getPoints());
+        System.out.println("\nCurrent points: " + player.getPoints());
     }
 
     public static void youLose() {
@@ -292,7 +309,7 @@ public class ChoHan {
 
         player.incrementLoses();
 
-        System.out.println("Current points: " + player.getPoints());
+        System.out.println("\nCurrent points: " + player.getPoints());
     }
 
     public static String createGameChoices() {
