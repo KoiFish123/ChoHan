@@ -5,4 +5,7 @@ public interface GameUtils {
 
     Ranking getRanking(int point);
 
+    void createGameChoices(int wins);
+
+    Integer bet(Player player);
 }

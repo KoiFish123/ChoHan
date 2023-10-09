@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="used loop instead of recursive for the game">
+    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="organize cheat. add interface and implement for utils">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ChoHan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ChoHan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +88,21 @@
       <option name="project" value="LOCAL" />
       <updated>1696635958866</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Organized the cheat code">
+      <created>1696637600356</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1696637600356</updated>
+    </task>
+    <task id="LOCAL-00006" summary="organize cheat. add interface and implement for utils">
+      <created>1696637699064</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1696637699064</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -94,6 +110,8 @@
     <MESSAGE value="update order of game" />
     <MESSAGE value="add utils and player class" />
     <MESSAGE value="used loop instead of recursive for the game" />
-    <option name="LAST_COMMIT_MESSAGE" value="used loop instead of recursive for the game" />
+    <MESSAGE value="Organized the cheat code" />
+    <MESSAGE value="organize cheat. add interface and implement for utils" />
+    <option name="LAST_COMMIT_MESSAGE" value="organize cheat. add interface and implement for utils" />
   </component>
 </project>
