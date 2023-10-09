@@ -65,14 +65,14 @@ public class ChoHan {
         cheatCodes.put("i want to win", player -> {
             System.out.println("Cheat code activated: You win!");
             System.out.println("I'm not giving you anything though.");
-            youWon(0, 0);
+            gameUtils.youWon(player, 0, 0);
             cheatUsedToSkip.set(true);
         });
 
         cheatCodes.put("i want to lose", player -> {
             System.out.println("Cheat code activated: You lost?");
             System.out.println("Unorthodox display of hubris but very well.");
-            youLose();
+            gameUtils.youLost(player);
             cheatUsedToSkip.set(true);
         });
 
@@ -200,44 +200,7 @@ public class ChoHan {
 
             // 3. BET
             // Set betting amount AFTER making your choices
-            // Separate function/method
             if (answers != null) ante = gameUtils.bet(player);
-
-//            while (true) {
-//                System.out.println("\nCurrent points: " + player.getPoints());
-//                System.out.println("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
-//                try {
-//                    ante = choicePicked.nextInt();
-//                    choicePicked.nextLine(); // This will consume the leftover newline "\n"
-//
-//                    // After certain amount of rounds, your betMax will increase
-//                    // For every 10 rounds, increase betMax by 100, to max of 500
-//                    if (player.getBetMax() < 500) {
-//                        int increaseAmount = (player.getRounds() / 10) * 100;
-//                        player.setBetMax(Math.min(player.getBetMax() + increaseAmount, 500));
-//                    }
-//
-//                    if (ante <= player.getBetMax() && ante <= player.getPoints() && ante > 0) {
-//                        player.subtractPoints(ante);
-//                        break;
-//                    }
-//                    if (ante > player.getBetMax())
-//                        // Put down more than betting maximum(betMax) allowed
-//                        System.out.print("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
-//
-//                    if (ante <= 0)
-//                        // less than or equal to 0 bet
-//                        System.out.print("Amount cannot be less than or equal to 0. Try again.\n");
-//
-//                    if (ante > player.getPoints())
-//                        // Betting more points than you have
-//                        System.out.println("Cannot ante more points than you have. Try again.\n");
-//
-//                } catch (java.util.InputMismatchException e) {
-//                    System.out.print("Please enter a valid integer for your bet.");
-//                    choicePicked.nextLine(); // Clear the invalid input
-//                }
-//            }
 
             // 4. RESULT
             // ODD OR EVEN RESULT
@@ -245,26 +208,8 @@ public class ChoHan {
                 if (answers.equals("odd") || answers.equals("even")) {
                     if (answers.equals("odd")) betPoolOdd += ante;
                     if (answers.equals("even")) betPoolEven += ante;
-                    try {
-                        System.out.print("The result is");
-                        Thread.sleep(1000);
-                        System.out.print(".");
-                        Thread.sleep(1000);
-                        System.out.print(".");
-                        Thread.sleep(1000);
-                        System.out.print(".");
-                        Thread.sleep(1000);
-                        System.out.println("\n" + die1 + " " + die2);
-                        Thread.sleep(1000);
 
-                        if (die1 == 1 && die2 == 1)
-                            System.out.print("SNAKE EYES! ");
-
-                        System.out.println(evenOrOdd);
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    gameUtils.displayDiceRoll(die1, die2, evenOrOdd);
 
                     if (answers.equals(evenOrOdd.toLowerCase())) {
                     /*
@@ -274,11 +219,11 @@ public class ChoHan {
                         - But for now, tripling the ante will suffice.
                      */
 
-                        youWon(ante, 3);        // For testing without bot
+                        gameUtils.youWon(player, ante, 3);        // For testing without bot
                         // youWonEvenOdd(betPoolEven+betPoolOdd, 1);
 
                     } else {
-                        youLose();
+                        gameUtils.youLost(player);
                     }
                 }
             }
@@ -330,61 +275,6 @@ public class ChoHan {
         System.exit(0);
     }
 
-    // Handle point after you won
-    public static void youWon(int ante, int multiplier) {
-        // DON'T TOUCH. IT IS FINE AS IS.
-        System.out.println("Correct! Not bad.");
-
-        System.out.println("You gain " + (ante * multiplier) + " points.");
-
-        player.addPoints(ante * multiplier);
-
-        player.incrementWins();
-
-        player.incrementWinStreak();
-
-        if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
-
-        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
-
-        System.out.println("\nCurrent points: " + player.getPoints());
-    }
-
-    public static void youWonEvenOdd(int betPool, int winningPlayers) {
-        System.out.println("Correct! Not bad.");
-
-        System.out.println("You gain " + (betPool / winningPlayers) + " points.");
-
-        player.addPoints(betPool / winningPlayers);
-
-        player.incrementWins();
-
-        player.incrementWinStreak();
-
-        if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
-
-        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
-
-        System.out.println("\nCurrent points: " + player.getPoints());
-    }
-
-    public static void youLose() {
-        // DON'T TOUCH. IT IS FINE AS IS.
-        System.out.println("Incorrect. it is what it is.");
-
-        // Gain nothing if you lose
-
-        // Lose your Win Streak
-        player.setWinStreak(0);
-
-        player.incrementLoses();
-
-        System.out.println("\nCurrent points: " + player.getPoints());
-    }
 
     public static String getUserInput() {
         return choicePicked.nextLine().toLowerCase();
