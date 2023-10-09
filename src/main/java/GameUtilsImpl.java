@@ -154,9 +154,11 @@ class GameUtilsImpl implements GameUtils {
     public void youWonEvenOdd(Player player, int betPool, int winningPlayers) {
         System.out.println("Correct! Not bad.");
 
-        System.out.println("You gain " + (betPool / winningPlayers) + " points.");
+        int pointsGain = betPool/winningPlayers;
 
-        player.addPoints(betPool / winningPlayers);
+        System.out.println("You gain " + pointsGain + " points.");
+
+        player.addPoints(pointsGain);
 
         player.incrementWins();
 
@@ -184,5 +186,57 @@ class GameUtilsImpl implements GameUtils {
         player.incrementLoses();
 
         System.out.println("\nCurrent points: " + player.getPoints());
+    }
+
+    @Override
+    public void isOutOfPoints(Player player) {
+        if (player.getPoints() == 0) {
+            System.out.print("Uh oh! You ran out of points");
+            try {
+                Thread.sleep(500);
+                System.out.print(".");
+                Thread.sleep(600);
+                System.out.print(".");
+                Thread.sleep(700);
+                System.out.println(".");
+                Thread.sleep(800);
+                System.out.print("Avoid dark alleys.");
+                shutdown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    public boolean playAgain(Player player) {
+        while (true) {
+            System.out.println("Again? [Y/N]");
+            String again = getUserInput();
+            if (again.equals("y") || again.equals("yes")) {
+
+                System.out.println();
+                System.out.println("Game Started\n");
+                return true;
+            }
+            if (again.equals("n") || again.equals("no")) {
+                System.out.println("Too bad. Come again.");
+
+                // Player's info
+                System.out.println("Final points: " + player.getPoints());
+                System.out.println("Highest Win Streak: " + player.getHighestWinStreak());
+                System.out.println("Title: " + getRanking(player.getPoints()));
+
+                return false;
+            } else System.out.println("Invalid answer. Try again.");
+        }
+    }
+
+    @Override
+    public String getUserInput() {
+        return choicePicked.nextLine().toLowerCase();
+    }
+
+    public void shutdown() {
+        System.exit(0);
     }
 }

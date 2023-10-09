@@ -8,14 +8,13 @@ class Player {
     private int loses;               // I haven't decided what to do with this yet. Maybe for the achievements?
 
     public Player() {
-        this.points = ChoHan.INITIAL_POINTS;
-        this.betMax = ChoHan.MAX_BET;
+        this.points = Game.INITIAL_POINTS;
+        this.betMax = Game.MAX_BET;
         this.rounds = 0;
         this.win = 0;
         this.winStreak = 0;
         this.highestWinStreak = 0;
         this.loses = 0;
-
     }
     public int getPoints() {
         return points;

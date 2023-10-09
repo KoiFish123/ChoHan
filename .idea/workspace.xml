@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="turn bet and ante to method in impl">
+    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="utils will now handle winning and losing">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ChoHan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ChoHan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Player.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +20,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -50,6 +52,15 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="ChoHan" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="ChoHan" />
+      <module name="ChoHan" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -108,7 +119,14 @@
       <option name="project" value="LOCAL" />
       <updated>1696817990998</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="utils will now handle winning and losing">
+      <created>1696818901006</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1696818901006</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -119,6 +137,7 @@
     <MESSAGE value="Organized the cheat code" />
     <MESSAGE value="organize cheat. add interface and implement for utils" />
     <MESSAGE value="turn bet and ante to method in impl" />
-    <option name="LAST_COMMIT_MESSAGE" value="turn bet and ante to method in impl" />
+    <MESSAGE value="utils will now handle winning and losing" />
+    <option name="LAST_COMMIT_MESSAGE" value="utils will now handle winning and losing" />
   </component>
 </project>
