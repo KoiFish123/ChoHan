@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
     /*
@@ -13,9 +15,9 @@ import java.util.Scanner;
      */
 
 class GameUtilsImpl implements GameUtils {
+
     static Scanner choicePicked = new Scanner(System.in);
 
-    // Roll your dice
     @Override
     public int rollDice() {
         // DON'T TOUCH. IT IS FINE AS IS.
@@ -23,9 +25,8 @@ class GameUtilsImpl implements GameUtils {
         return die;
     }
 
-    // Is it even or odd?
     @Override
-    public String EvenOrOdd(int die1, int die2) {
+    public String evenOrOdd(int die1, int die2) {
         // DON'T TOUCH. IT IS FINE AS IS.
         if ((die1 + die2) % 2 == 1) {
             return ("ODD");
@@ -33,7 +34,6 @@ class GameUtilsImpl implements GameUtils {
         return ("EVEN");
     }
 
-    // Return ranking
     @Override
     public Ranking getRanking(int point) {
         // DON'T TOUCH. IT IS FINE AS IS.
@@ -43,6 +43,34 @@ class GameUtilsImpl implements GameUtils {
             }
         }
         throw new IllegalArgumentException("Invalid rank: " + point);
+    }
+
+    @Override
+    public void displayNPCBets(NPC[] npcs, int betPoolOdd, int betPoolEven) {
+        List<NPC> oddNPCs = new ArrayList<>();
+        List<NPC> evenNPCs = new ArrayList<>();
+
+        // Categorize NPCs based on their bets
+        for (NPC npc : npcs) {
+            if (npc.getBet()[0] == 1) {
+                oddNPCs.add(npc);
+            } else {
+                evenNPCs.add(npc);
+            }
+        }
+
+        // Determine the maximum number of NPCs to display side-by-side
+        int maxSize = Math.max(oddNPCs.size(), evenNPCs.size());
+        System.out.println("\n\t\t\t\t\tCurrent pools");
+        System.out.println("ODD: " + betPoolOdd + "\t\t\t\t\t\tEVEN: " + betPoolEven);
+
+        // Print NPCs in a two-column format
+        for (int i = 0; i < maxSize; i++) {
+            String oddNPCName = (i < oddNPCs.size()) ? oddNPCs.get(i).getName() + " bet " + oddNPCs.get(i).getBet()[1] : "";
+            String evenNPCName = (i < evenNPCs.size()) ? evenNPCs.get(i).getName() + " bet " + evenNPCs.get(i).getBet()[1] : "";
+
+            System.out.printf("%-25s\t\t%-25s%n", oddNPCName, evenNPCName);
+        }
     }
 
     @Override
@@ -61,6 +89,23 @@ class GameUtilsImpl implements GameUtils {
             gameChoices += "\n5. Guess the difference between both dice";
         }
         System.out.println(gameChoices);
+    }
+
+    @Override
+    public int oneDieGuessChoices() {
+        int choice = 0;
+        while (true) {
+            System.out.println("Pick a number that will appear on one of the dice (between 1-6).");
+            System.out.println("Or type '0', to go back");
+            try {
+                choice = choicePicked.nextInt();
+                choicePicked.nextLine(); // This will consume the leftover newline "\n"
+                if (choice <= 6 && choice >= 0) return choice;
+            } catch (java.util.InputMismatchException e) {
+                choicePicked.nextLine(); // Clear the invalid input
+            }
+            System.out.print("Please enter a valid integer. ");
+        }
     }
 
     @Override
@@ -133,9 +178,11 @@ class GameUtilsImpl implements GameUtils {
         // DON'T TOUCH. IT IS FINE AS IS.
         System.out.println("Correct! Not bad.");
 
-        System.out.println("You gain " + (ante * multiplier) + " points.");
+        System.out.println("Current Points: " + player.getPoints());
 
-        player.addPoints(ante * multiplier);
+        int winning = ante * multiplier;
+
+        player.addPoints(winning);
 
         player.incrementWins();
 
@@ -146,6 +193,13 @@ class GameUtilsImpl implements GameUtils {
         // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
         if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
             System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
+
+        System.out.println("Current Winning: " + winning);
+
+        winning = betAgainstTheHouse(player, winning);
+
+        System.out.println("You gain " + winning + " points.");
+
 
         System.out.println("\nCurrent points: " + player.getPoints());
     }
@@ -154,11 +208,9 @@ class GameUtilsImpl implements GameUtils {
     public void youWonEvenOdd(Player player, int betPool, int winningPlayers) {
         System.out.println("Correct! Not bad.");
 
-        int pointsGain = betPool/winningPlayers;
+        System.out.println("Current Points: " + player.getPoints());
 
-        System.out.println("You gain " + pointsGain + " points.");
-
-        player.addPoints(pointsGain);
+        int winning = betPool / winningPlayers;
 
         player.incrementWins();
 
@@ -170,7 +222,85 @@ class GameUtilsImpl implements GameUtils {
         if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
             System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
 
+        System.out.println("Current Winning: " + winning);
+
+        winning = betAgainstTheHouse(player, winning);
+
+        System.out.println("You gain " + winning + " points.");
+
+        player.addPoints(winning);
+
         System.out.println("\nCurrent points: " + player.getPoints());
+    }
+
+
+    public int betAgainstTheHouse(Player player, int winning) {
+        int currentWinning = winning;
+        int roundsPlayed = 0;
+
+        System.out.println("Would you like to play against the house? [Y/N]");
+        while (roundsPlayed < 5) {
+            String response = getUserInput();
+
+            if (response.equals("n") || response.equals("no")) {
+                break; // Exit the loop
+            } else if (response.equals("y") || response.equals("yes")) {
+                int die1 = rollDice();
+                int die2 = rollDice();
+                String evenOrOdd = evenOrOdd(die1, die2);
+
+                System.out.println("[Cue the intense music]");
+                System.out.println("Playing against the house...");
+                createGameChoices(0);
+                response = getUserInput();
+
+                while (!response.equals("1") && !response.equals("2")) {
+                    System.out.println("Invalid answer. Try again.");
+                    response = getUserInput();
+                }
+
+                String guess = response.equals("1") ? "odd" : "even";
+                displayDiceRoll(die1, die2, evenOrOdd);
+
+                if (guess.equals(evenOrOdd.toLowerCase())) {
+                    // CORRECT
+                    currentWinning *= 2;
+                    System.out.println("Correct! Your winnings have doubled to: " + currentWinning);
+
+                    player.incrementWins();
+
+                    player.incrementWinStreak();
+
+                    if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
+
+                    // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
+                    if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
+                        System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
+
+                } else {
+                    // WRONG
+                    currentWinning = 0;
+
+                    player.setWinStreak(0);
+
+                    player.incrementLoses();
+
+                    System.out.println("Incorrect. You lost everything.");
+                    break; // Exit the loop
+                }
+            } else {
+                System.out.println("Invalid answer. Try again.");
+            }
+
+            roundsPlayed++;
+            if (roundsPlayed < 5)
+                System.out.println("Would you like to keep playing against the house? [Y/N]");
+
+            if (roundsPlayed == 5)
+                System.out.println("That's 5 rounds done! You are quite the gambler, huh?\n Unfortunately, this is as far as you can go.");
+        }
+        // Return currentWinning for youWon() or youWonEvenOdd() to handle
+        return currentWinning;
     }
 
     @Override
@@ -207,6 +337,7 @@ class GameUtilsImpl implements GameUtils {
             }
         }
     }
+
     @Override
     public boolean playAgain(Player player) {
         while (true) {
@@ -236,6 +367,7 @@ class GameUtilsImpl implements GameUtils {
         return choicePicked.nextLine().toLowerCase();
     }
 
+    @Override
     public void shutdown() {
         System.exit(0);
     }

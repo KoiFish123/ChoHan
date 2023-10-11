@@ -11,7 +11,7 @@ class Player {
         this.points = Game.INITIAL_POINTS;
         this.betMax = Game.MAX_BET;
         this.rounds = 0;
-        this.win = 0;
+        this.win = 5;           // Set high for testing. Todo: Change back
         this.winStreak = 0;
         this.highestWinStreak = 0;
         this.loses = 0;
