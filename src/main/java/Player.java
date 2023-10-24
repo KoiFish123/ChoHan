@@ -1,6 +1,6 @@
 class Player {
     private int points;
-    private int betMax;
+    private int betMax = 0;
     private int rounds;
     private int win;
     private int winStreak;
@@ -8,10 +8,10 @@ class Player {
     private int loses;               // I haven't decided what to do with this yet. Maybe for the achievements?
 
     public Player() {
-        this.points = Game.INITIAL_POINTS;
-        this.betMax = Game.MAX_BET;
-        this.rounds = 0;
-        this.win = 5;           // Set high for testing. Todo: Change back
+        this.points = Game.INITIAL_POINTS + 10000;  // Set high for testing. Todo: Change back
+        adjustBetMax();
+        this.rounds = 9;                            // Set high for testing. Todo: Change back
+        this.win = 100;                             // Set high for testing. Todo: Change back
         this.winStreak = 0;
         this.highestWinStreak = 0;
         this.loses = 0;
@@ -22,17 +22,23 @@ class Player {
     public void setPoints(int points) {
         this.points = points;
     }
-
     public void addPoints(int points) {
         this.points += points;
     }
-
     public void subtractPoints(int points) {
         this.points -= points;
     }
 
     public int getBetMax() {
         return betMax;
+    }
+
+    public void adjustBetMax(){
+        // After certain amount of rounds, your betMax will increase
+        // For every 10 rounds, increase betMax by 100, to max of 500
+        if (getBetMax() < 500) {
+            setBetMax(Math.min((getRounds() / 10) * 100 +100, 500));
+        }
     }
     public void setBetMax(int betMax) {
         this.betMax = betMax;

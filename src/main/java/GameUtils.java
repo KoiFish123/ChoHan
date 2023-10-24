@@ -7,7 +7,7 @@ public interface GameUtils {
 
     void displayNPCBets(NPC[] npcs, int betPoolOdd, int betPoolEven);
 
-    void createGameChoices(int wins);
+    void createGameChoices(int rounds);
 
     int oneDieGuessChoices();
 
@@ -21,11 +21,17 @@ public interface GameUtils {
 
     void youLost(Player player);
 
-    void isOutOfPoints(Player player);
-
     boolean playAgain(Player player);
 
     String getUserInput();
 
     void shutdown();
+
+    void showMessage(String message);
+
+    void showChoice(String choice);
+
+    void showErrorMessage(String errorMessage);
+
+    void checkAndDisplayAnnouncement(Player player);
 }

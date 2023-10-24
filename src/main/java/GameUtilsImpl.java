@@ -74,29 +74,29 @@ class GameUtilsImpl implements GameUtils {
     }
 
     @Override
-    public void createGameChoices(int wins) {
+    public void createGameChoices(int rounds) {
         String gameChoices;
         gameChoices = "What will it be?";
         gameChoices += "\n1. Odd";
         gameChoices += "\n2. Even";
-        if (wins >= 5) {
+        if (rounds > 5) {
             gameChoices += "\n3. Guess the number on one die";
         }
-        if (wins >= 10) {
+        if (rounds > 10) {
             gameChoices += "\n4. Guess the number on both dice";
         }
-        if (wins >= 20) {
+        if (rounds > 20) {
             gameChoices += "\n5. Guess the difference between both dice";
         }
-        System.out.println(gameChoices);
+        showChoice(gameChoices);
     }
 
     @Override
     public int oneDieGuessChoices() {
         int choice = 0;
         while (true) {
-            System.out.println("Pick a number that will appear on one of the dice (between 1-6).");
-            System.out.println("Or type '0', to go back");
+            showMessage("Pick a number that will appear on one of the dice (between 1-6).");
+            showMessage("Or type '0', to go back");
             try {
                 choice = choicePicked.nextInt();
                 choicePicked.nextLine(); // This will consume the leftover newline "\n"
@@ -104,26 +104,22 @@ class GameUtilsImpl implements GameUtils {
             } catch (java.util.InputMismatchException e) {
                 choicePicked.nextLine(); // Clear the invalid input
             }
-            System.out.print("Please enter a valid integer. ");
+            showErrorMessage("Please enter a valid integer.");
         }
     }
 
     @Override
     public Integer bet(Player player) {
-        System.out.println("\nCurrent points: " + player.getPoints());
-        System.out.println("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
+
+        player.adjustBetMax();
+
+        showMessage("\nCurrent points: " + player.getPoints());
+        showChoice("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
         Integer ante = 0;
         while (true) {
             try {
                 ante = choicePicked.nextInt();
                 choicePicked.nextLine(); // This will consume the leftover newline "\n"
-
-                // After certain amount of rounds, your betMax will increase
-                // For every 10 rounds, increase betMax by 100, to max of 500
-                if (player.getBetMax() < 500) {
-                    int increaseAmount = (player.getRounds() / 10) * 100;
-                    player.setBetMax(Math.min(player.getBetMax() + increaseAmount, 500));
-                }
 
                 if (ante <= player.getBetMax() && ante <= player.getPoints() && ante > 0) {
                     player.subtractPoints(ante);
@@ -142,7 +138,7 @@ class GameUtilsImpl implements GameUtils {
                     System.out.println("Cannot ante more points than you have. Try again.\n");
 
             } catch (java.util.InputMismatchException e) {
-                System.out.print("Please enter a valid integer for your bet.");
+                System.out.print("Please enter a valid integer for your bet.\n");
                 choicePicked.nextLine(); // Clear the invalid input
             }
         }
@@ -166,7 +162,7 @@ class GameUtilsImpl implements GameUtils {
             if (die1 == 1 && die2 == 1)
                 System.out.print("SNAKE EYES! ");
 
-            System.out.println(evenOrOdd);
+            System.out.println(evenOrOdd + "!");
             Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,7 +172,7 @@ class GameUtilsImpl implements GameUtils {
     @Override
     public void youWon(Player player, int ante, int multiplier) {
         // DON'T TOUCH. IT IS FINE AS IS.
-        System.out.println("Correct! Not bad.");
+        System.out.println("Nicely done!");
 
         System.out.println("Current Points: " + player.getPoints());
 
@@ -190,25 +186,25 @@ class GameUtilsImpl implements GameUtils {
 
         if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
 
-        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
+        if (player.getRounds() >= 15) {
 
-        System.out.println("Current Winning: " + winning);
+            showMessage("Current Winning: " + winning);
 
-        winning = betAgainstTheHouse(player, winning);
+            winning = betAgainstTheHouse(player, winning);
 
-        System.out.println("You gain " + winning + " points.");
+        }
+
+        showMessage("You gain " + winning + " points.");
 
 
-        System.out.println("\nCurrent points: " + player.getPoints());
+        showMessage("\nCurrent points: " + player.getPoints());
     }
 
     @Override
     public void youWonEvenOdd(Player player, int betPool, int winningPlayers) {
-        System.out.println("Correct! Not bad.");
+        showMessage("Nicely done.");
 
-        System.out.println("Current Points: " + player.getPoints());
+        showMessage("Current Points: " + player.getPoints());
 
         int winning = betPool / winningPlayers;
 
@@ -218,13 +214,17 @@ class GameUtilsImpl implements GameUtils {
 
         if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
 
-        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-            System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
 
-        System.out.println("Current Winning: " + winning);
+        /*
+        INTERMEDIATE LEVEL: Guess a number on one of the dice. Available after 5 wins
+         */
+        if (player.getRounds() >= 15) {
 
-        winning = betAgainstTheHouse(player, winning);
+            showMessage("Current Winning: " + winning);
+
+            winning = betAgainstTheHouse(player, winning);
+
+        }
 
         System.out.println("You gain " + winning + " points.");
 
@@ -265,17 +265,14 @@ class GameUtilsImpl implements GameUtils {
                 if (guess.equals(evenOrOdd.toLowerCase())) {
                     // CORRECT
                     currentWinning *= 2;
-                    System.out.println("Correct! Your winnings have doubled to: " + currentWinning);
+                    System.out.println("Nicely done! Your winnings have doubled to: " + currentWinning);
 
                     player.incrementWins();
 
                     player.incrementWinStreak();
 
-                    if (player.getWinStreak() > player.getHighestWinStreak()) player.setHighestWinStreak(player.getWinStreak());
-
-                    // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
-                    if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
-                        System.out.println("Nice going! Your win streak is currently at " + player.getWinStreak());
+                    if (player.getWinStreak() > player.getHighestWinStreak())
+                        player.setHighestWinStreak(player.getWinStreak());
 
                 } else {
                     // WRONG
@@ -285,19 +282,21 @@ class GameUtilsImpl implements GameUtils {
 
                     player.incrementLoses();
 
-                    System.out.println("Incorrect. You lost everything.");
+                    System.out.println("Aww... Better luck next time.");
                     break; // Exit the loop
                 }
             } else {
                 System.out.println("Invalid answer. Try again.");
             }
 
+            checkAndDisplayAnnouncement(player);
+
             roundsPlayed++;
             if (roundsPlayed < 5)
-                System.out.println("Would you like to keep playing against the house? [Y/N]");
+                System.out.println("Want to keep going, just you and me? [Y/N]");
 
             if (roundsPlayed == 5)
-                System.out.println("That's 5 rounds done! You are quite the gambler, huh?\n Unfortunately, this is as far as you can go.");
+                System.out.println("Ugh, enough! You're so persistent");
         }
         // Return currentWinning for youWon() or youWonEvenOdd() to handle
         return currentWinning;
@@ -306,7 +305,7 @@ class GameUtilsImpl implements GameUtils {
     @Override
     public void youLost(Player player) {
         // DON'T TOUCH. IT IS FINE AS IS.
-        System.out.println("Incorrect. it is what it is.");
+        System.out.println("Incorrect. It is what it is.");
 
         // Gain nothing if you lose
 
@@ -319,29 +318,9 @@ class GameUtilsImpl implements GameUtils {
     }
 
     @Override
-    public void isOutOfPoints(Player player) {
-        if (player.getPoints() == 0) {
-            System.out.print("Uh oh! You ran out of points");
-            try {
-                Thread.sleep(500);
-                System.out.print(".");
-                Thread.sleep(600);
-                System.out.print(".");
-                Thread.sleep(700);
-                System.out.println(".");
-                Thread.sleep(800);
-                System.out.print("Avoid dark alleys.");
-                shutdown();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     public boolean playAgain(Player player) {
         while (true) {
-            System.out.println("Again? [Y/N]");
+            System.out.println("Would you like to keep playing? [Y/N]");
             String again = getUserInput();
             if (again.equals("y") || again.equals("yes")) {
 
@@ -353,7 +332,7 @@ class GameUtilsImpl implements GameUtils {
                 System.out.println("Too bad. Come again.");
 
                 // Player's info
-                System.out.println("Final points: " + player.getPoints());
+                System.out.println("\nFinal points: " + player.getPoints());
                 System.out.println("Highest Win Streak: " + player.getHighestWinStreak());
                 System.out.println("Title: " + getRanking(player.getPoints()));
 
@@ -370,5 +349,81 @@ class GameUtilsImpl implements GameUtils {
     @Override
     public void shutdown() {
         System.exit(0);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
+    @Override
+    public void showChoice(String choice) {
+        System.out.println(choice);
+    }
+
+    @Override
+    public void showErrorMessage(String errorMessage) {
+        System.out.println("Error: " + errorMessage);
+    }
+
+    public void displayAnnouncement(String announcement) {
+        System.out.println("\n+-----------------------ANNOUNCEMENT-----------------------+\n");
+        System.out.println(announcement);
+        System.out.println("\n+----------------------------------------------------------+\n");
+    }
+
+    @Override
+    public void checkAndDisplayAnnouncement(Player player) {
+        // IF THE PLAYER WIN STREAK IS 5, 10, 15, ETC. TELL THEM
+        if (player.getWinStreak() % 5 == 0 && player.getWinStreak() != 0)
+            displayAnnouncement("Nice going! Your win streak is currently at " + player.getWinStreak());
+
+        // IF YOU ARE OUT OF POINTS, THE GAME KICK YOU OUT
+
+        if (player.getPoints() == 0) {
+            displayAnnouncement("You ran out of points. Better luck next time.");
+            shutdown();
+        }
+
+        if (player.getRounds() == 5 || player.getRounds() == 10 || player.getRounds() == 15 || player.getRounds() == 20) {
+            String newModeAnnouncement = "                New mode has been unlocked!                \n";
+            switch (player.getRounds()) {
+                case 5:
+                    // INTERMEDIATE LEVEL EXPLANATION
+                    newModeAnnouncement +=
+                            "You unlock the 'Bet on one die' option, where you can " +
+                                    "\npredict a number you think one of the two dice will have. " +
+                                    "\nYou will get a good amount of tags if you win this."
+                    ;
+                    break;
+                case 10:
+                    newModeAnnouncement +=
+                            "You unlock the 'Bet on two dice' option, where you " +
+                                    "\nhave to predict both numbers of the dice. You have to " +
+                                    "\nante at least 20% of your current points, but get " +
+                                    "\nthe whole pot if you win this."
+                    ;
+                    break;
+                case 15:
+                    newModeAnnouncement +=
+                            "\nYou can choose to play against the house " +
+                                    "\nwhen winning a game (or refuse). The dealer will roll the dice again, and " +
+                                    "\nyou gotta predict if it's even or odd. If you are correct, it'll double your " +
+                                    "\nwinnings and you can choose to play against the house again (up to 5 times) " +
+                                    "\nor cash out."
+                    ;
+                    break;
+                case 20:
+                    newModeAnnouncement+=
+                            "\nNew mode has been unlocked. You unlock the 'Bet on the difference' option, " +
+                                    "\nwhere you predict the difference between the two dice. The payout depends " +
+                                    "\non your chosen number (the higher the difference the higher the payout) " +
+                                    "\nand can go up to absurd heights."
+                    ;
+                    break;
+                default: break;
+            }
+            displayAnnouncement(newModeAnnouncement);
+        }
     }
 }
