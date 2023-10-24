@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="adjust betMax. add game description">
+    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="announcement system (need revise)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ChoHan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ChoHan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Player.java" afterDir="false" />
     </list>
@@ -140,7 +138,14 @@
       <option name="project" value="LOCAL" />
       <updated>1697037558035</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="announcement system (need revise)">
+      <created>1698178073886</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1698178073886</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -154,6 +159,7 @@
     <MESSAGE value="utils will now handle winning and losing" />
     <MESSAGE value="implemented npcs" />
     <MESSAGE value="updated Ranking" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated Ranking" />
+    <MESSAGE value="announcement system (need revise)" />
+    <option name="LAST_COMMIT_MESSAGE" value="announcement system (need revise)" />
   </component>
 </project>

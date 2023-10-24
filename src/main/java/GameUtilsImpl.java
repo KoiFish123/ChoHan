@@ -162,7 +162,7 @@ class GameUtilsImpl implements GameUtils {
             if (die1 == 1 && die2 == 1)
                 System.out.print("SNAKE EYES! ");
 
-            System.out.println(evenOrOdd + "!");
+            System.out.println(evenOrOdd + "!\n");
             Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
@@ -424,6 +424,22 @@ class GameUtilsImpl implements GameUtils {
                 default: break;
             }
             displayAnnouncement(newModeAnnouncement);
+        }
+
+        if (player.getWins() == 10 || player.getWins() == 20 || player.getWins() == 30) {
+            switch (player.getWins()) {
+                case 10:
+                    displayAnnouncement("You can now bet up to 500 points");
+                    break;
+                case 20:
+                    displayAnnouncement("You can now bet up to 800 points");
+
+                    break;
+                case 30:
+                    displayAnnouncement("You can now bet up to 1000 points");
+                    break;
+                default: break;
+            }
         }
     }
 }
