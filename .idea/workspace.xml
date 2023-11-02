@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="announcement system (need revise)">
+    <list default="true" id="6dc46bc4-ffd4-42fe-8f31-29a87ffb3577" name="Changes" comment="adjust betMax">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ChoHan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ChoHan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameUtilsImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Player.java" afterDir="false" />
     </list>
@@ -26,6 +28,19 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="dbfa25bc-f043-4e3f-85bb-49e7461b5c07" />
+        <option name="url" value="https://github.com/KoiFish123/ChoHan" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -145,7 +160,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698178073886</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="adjust betMax">
+      <created>1698181545158</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1698181545158</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -160,6 +182,7 @@
     <MESSAGE value="implemented npcs" />
     <MESSAGE value="updated Ranking" />
     <MESSAGE value="announcement system (need revise)" />
-    <option name="LAST_COMMIT_MESSAGE" value="announcement system (need revise)" />
+    <MESSAGE value="adjust betMax" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjust betMax" />
   </component>
 </project>

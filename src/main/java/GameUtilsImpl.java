@@ -95,8 +95,8 @@ class GameUtilsImpl implements GameUtils {
     public int oneDieGuessChoices() {
         int choice = 0;
         while (true) {
-            showMessage("Pick a number that will appear on one of the dice (between 1-6).");
-            showMessage("Or type '0', to go back");
+            showChoice("Pick a number that will appear on one of the dice (between 1-6).");
+            showChoice("Or type '0', to go back");
             try {
                 choice = choicePicked.nextInt();
                 choicePicked.nextLine(); // This will consume the leftover newline "\n"
@@ -115,11 +115,16 @@ class GameUtilsImpl implements GameUtils {
 
         showMessage("\nCurrent points: " + player.getPoints());
         showChoice("Set bet amount (amount cannot be more than " + player.getBetMax() + "):");
+        showChoice("Or type input \"0\" to go back");
         Integer ante = 0;
         while (true) {
             try {
                 ante = choicePicked.nextInt();
                 choicePicked.nextLine(); // This will consume the leftover newline "\n"
+
+                if (ante == 0) {
+                    return null;  // return null if user chooses to go back
+                }
 
                 if (ante <= player.getBetMax() && ante <= player.getPoints() && ante > 0) {
                     player.subtractPoints(ante);
@@ -127,18 +132,18 @@ class GameUtilsImpl implements GameUtils {
                 }
                 if (ante > player.getBetMax())
                     // Put down more than betting maximum(betMax) allowed
-                    System.out.print("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
+                    showErrorMessage("Amount cannot be more than " + player.getBetMax() + " Try again.\n");
 
-                if (ante <= 0)
-                    // less than or equal to 0 bet
-                    System.out.print("Amount cannot be less than or equal to 0. Try again.\n");
+                if (ante < 0)
+                    // less than 0 bet
+                    showErrorMessage("Amount cannot be less than 0. Try again.\n");
 
                 if (ante > player.getPoints())
                     // Betting more points than you have
-                    System.out.println("Cannot ante more points than you have. Try again.\n");
+                    showErrorMessage("Cannot ante more points than you have. Try again.\n");
 
             } catch (java.util.InputMismatchException e) {
-                System.out.print("Please enter a valid integer for your bet.\n");
+                showErrorMessage("Please enter a valid integer for your bet.\n");
                 choicePicked.nextLine(); // Clear the invalid input
             }
         }

@@ -9,10 +9,11 @@ class Player {
 
     public Player() {
         // Set high for testing. Todo: Change back
-        this.points = Game.INITIAL_POINTS + 10000;
+        this.points = ChoHanGame.INITIAL_POINTS + 10000;
         this.betMax = 200;
-        this.rounds = 9;
-        this.win = 9;
+        // round start at 1
+        this.rounds = 100;
+        this.win = 100;
         this.winStreak = 0;
         this.highestWinStreak = 0;
         this.loses = 0;

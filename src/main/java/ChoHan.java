@@ -27,7 +27,7 @@ public class ChoHan {
         }
     }
     public static void startGame() {
-        Game game = new Game();
+        ChoHanGame choHanGame = new ChoHanGame();
         gameUtils.shutdown();
     }
 }
